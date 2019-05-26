@@ -6,6 +6,9 @@ import torch.nn as nn
 import os.path
 import re
 import sys
+import torch
+from keras.preprocessing.text import Tokenizer
+from torch.nn.utils.rnn import pad_sequence
 
 
 def strip_newsgroup_header(text):
@@ -95,22 +98,44 @@ def load_text(text_dir, class_to_idx, remove=()):
 
     return texts, labels
 
+def word2index(texts,pad=True):
+    
+    
+    # word转为index
+    tokenizer = Tokenizer(num_words=256)
+    tokenizer.fit_on_texts(texts)
+    sequences = tokenizer.texts_to_sequences(texts)
+    if pad:
+        data = pad_sequence( [torch.tensor(sequence)  for sequence in sequences ],batch_first=True)
+    else:
+        data=[]
+        for i in range(len(sequences)):
+            data.append(np.asarray(sequences[i]))
+    # pad
+
+    #return
+    return data
 
 class Newsgroup(data.Dataset):
 
-    def __init__(self,text_dir,remove=()):
+    def __init__(self,text_dir,remove=(),pad=True):
         classes, class_to_idx = self._find_classes(text_dir)
         self.text_dir = text_dir
         
         #读文件，把文本保存起来，根据remove去掉文件内的无关信息
         texts, labels = load_text(text_dir, class_to_idx, remove)
-
+        
 
         self.remove = remove
+        #text打印出来是byte
         self.texts = texts
         self.labels = labels
-        #英文单词转位 数字向量表现形式, pad变为一样的长度，如果要变为数字表示形式，需要有一个单词到数字的hash，word2vec，glove
+        # 英文单词转为 数字向量表现形式, pad变为一样的长度，
+        # 如果要变为数字表示形式，需要有一个单词到数字的hash，word2vec，glove
+        # 转换过后要用pad把文本弄成一样的长度
+        data = word2index(texts,pad)
 
+        self.data = data
 
 
     def _find_classes(self, dir):
@@ -136,3 +161,9 @@ class Newsgroup(data.Dataset):
         return classes, class_to_idx
 
 
+    def __getitem__(self, index):
+        sample, target = self.data[index], self.labels[index]
+        return sample, target
+
+    def __len__(self):
+        return len(self.texts)

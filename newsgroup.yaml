@@ -8,3 +8,7 @@ test:
   test_interval: 500 # interval of two continuous test phase
   test_only: False # test a given model and exit
   resume_file: '' # model to test
+
+data:
+  vocab_size: 299567
+  embedding_dim: 256 #词向量维度
