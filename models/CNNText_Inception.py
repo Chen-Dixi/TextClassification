@@ -47,11 +47,7 @@ class CNNText_inception(nn.Module):
         self.model_name = 'CNNText_inception'
         self.opt=opt
         self.encoder = nn.Embedding(opt.vocab_size,opt.embedding_dim)
-        self.title_conv=nn.Sequential(
-            Inception(opt.embedding_dim,incept_dim),#(batch_size,64,opt.title_seq_len)->(batch_size,32,(opt.title_seq_len)/2)
-            Inception(incept_dim,incept_dim),
-            nn.MaxPool1d(opt.title_seq_len)
-        )
+        
         self.content_conv=nn.Sequential(
             Inception(opt.embedding_dim,incept_dim),#(batch_size,64,opt.content_seq_len)->(batch_size,64,(opt.content_seq_len)/2)
             #Inception(incept_dim,incept_dim),#(batch_size,64,opt.content_seq_len/2)->(batch_size,32,(opt.content_seq_len)/4)
@@ -68,15 +64,15 @@ class CNNText_inception(nn.Module):
             print('load embedding')
             self.encoder.weight.data.copy_(t.from_numpy(np.load(opt.embedding_path)['vector']))
  
-    def forward(self,title,content):
-        title = self.encoder(title)
-        content=self.encoder(content)
+    def forward(self,texts):
+        x = self.encoder(texts)
+        
         if self.opt.static:
-            title=title.detach()
-            content=content.detach(0)
-        title_out=self.title_conv(title.permute(0,2,1))
-        content_out=self.content_conv(content.permute(0,2,1))
-        out=torch.cat((title_out,content_out),1).view(content_out.size(0), -1)
+            x=x.detach()
+        
+        #permute to become channel first
+        x=self.content_conv(x.permute(0,2,1))
+        out=x.view(x.size(0), -1)
         out=self.fc(out)
         return out
         

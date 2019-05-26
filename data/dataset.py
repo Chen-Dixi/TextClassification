@@ -98,11 +98,11 @@ def load_text(text_dir, class_to_idx, remove=()):
 
     return texts, labels
 
-def word2index(texts,pad=True):
-    
+def word2index(texts,vocab_size=256,pad=True):
+    #vocab_size is embedding_dim
     
     # word转为index
-    tokenizer = Tokenizer(num_words=256)
+    tokenizer = Tokenizer(num_words=vocab_size)
     tokenizer.fit_on_texts(texts)
     sequences = tokenizer.texts_to_sequences(texts)
     if pad:
@@ -118,7 +118,7 @@ def word2index(texts,pad=True):
 
 class Newsgroup(data.Dataset):
 
-    def __init__(self,text_dir,remove=(),pad=True):
+    def __init__(self,text_dir,vocab_size,remove=(),pad=True):
         classes, class_to_idx = self._find_classes(text_dir)
         self.text_dir = text_dir
         
@@ -133,7 +133,7 @@ class Newsgroup(data.Dataset):
         # 英文单词转为 数字向量表现形式, pad变为一样的长度，
         # 如果要变为数字表示形式，需要有一个单词到数字的hash，word2vec，glove
         # 转换过后要用pad把文本弄成一样的长度
-        data = word2index(texts,pad)
+        data = word2index(texts,vocab_size,pad)
 
         self.data = data
 
