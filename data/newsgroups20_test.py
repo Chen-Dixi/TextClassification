@@ -22,6 +22,7 @@ class NewsgroupTestCase(unittest.TestCase):
         print("start")
         news_ds = Newsgroup(TEXT_DATA_DIR,train=True)
         train_dl = DataLoader(news_ds,batch_size=64,shuffle=True,drop_last=True)
+        print(news_ds.data[0].dtype,news_ds.data[0].size())
         for idx, data in tqdm.tqdm(enumerate(train_dl)):
             pass
 

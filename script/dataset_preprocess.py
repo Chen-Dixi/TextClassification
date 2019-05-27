@@ -5,7 +5,19 @@ from keras.preprocessing.sequence import pad_sequences
 import os.path
 import re
 import sys
+from gensim.models import word2vec
+from gensim.models import KeyedVectors
 
+slim_filename = 'data/word2vec-slim/GoogleNews-vectors-negative300-SLIM.bin.gz'
+
+print("start")
+model = KeyedVectors.load_word2vec_format(slim_filename, binary=True)
+keys = [w for w in model.vocab.keys()]
+word2id = model.vocab
+emb = np.array(model.syn0)
+np.savez_compressed('data/embedding.npz',vector=emb)
+
+print("finish load google news")
 def strip_newsgroup_header(text):
     """
     Given text in "news" format, strip the headers, by removing everything
@@ -113,14 +125,26 @@ def _find_classes( dir):
         classes.sort()
         class_to_idx = {classes[i]: i for i in range(len(classes))}
         return classes, class_to_idx
+
+if sys.version_info < (3,):
+    maketrans = string.maketrans
+else:
+    maketrans = str.maketrans
+
+
+
+word_index = dict((w,word2id[w].index) for w in keys)
 def word2index(texts,vocab_size=256,pad=True):
     #vocab_size is embedding_dim
     
     # word转为index
-    tokenizer = Tokenizer(num_words=vocab_size)
-    tokenizer.fit_on_texts(texts)
+    tokenizer = Tokenizer(num_words=vocab_size,oov_token='something')
+    # tokenizer.fit_on_texts(texts)
+    tokenizer.word_index = word_index
     sequences = tokenizer.texts_to_sequences(texts)
     
+
+
     data = pad_sequences(sequences ,maxlen=5000,padding='post', truncating='post')
     
     # pad
@@ -128,6 +152,7 @@ def word2index(texts,vocab_size=256,pad=True):
     #return
     return data
 #1 train.npz
+print("start load 20news")
 TRAIN_DIR='data/20_newsgroups'
 _, class_to_idx = _find_classes(TRAIN_DIR)
 train_texts, train_labels = load_text(TRAIN_DIR,class_to_idx,remove=('headers','footers','quotes'))
@@ -143,3 +168,4 @@ test_inputs = word2index(test_texts,vocab_size=299567)
 test_labels = np.array(test_labels)
 print(test_inputs.shape)
 np.savez_compressed('data/test.npz',texts=test_inputs,labels=test_labels)
+print("finish")

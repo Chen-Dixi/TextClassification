@@ -21,7 +21,8 @@ model:
   content_seq_len: 5000 #描述长度 nn.MaxPool1d(opt.content_seq_len)
   linear_hidden_size: 256
   num_classes: 20
-  pretrain_embedding: False
+  pretrain_embedding: True
+  embedding_path: 'data/embedding.npz'
   static: False #是否让Embedding保持不动
   
 data:

@@ -60,7 +60,7 @@ class CNNText_inception(nn.Module):
         )
         if opt.pretrain_embedding:
             print('load embedding')
-            #self.encoder.weight.data.copy_(torch.from_numpy(np.load(opt.embedding_path)['vector']))
+            self.encoder.weight.data.copy_(torch.from_numpy(np.load(opt.embedding_path)['vector']))
  
     def forward(self,texts):
         x = self.encoder(texts)
