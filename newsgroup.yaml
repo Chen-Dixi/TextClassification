@@ -18,15 +18,15 @@ model:
   vocab_size: 299567
   embedding_dim: 300 #词向量维度
   inception_dim: 200 #inception卷积核数
-  content_seq_len: 120 #描述长度 nn.MaxPool1d(opt.content_seq_len)
+  content_seq_len: 5000 #描述长度 nn.MaxPool1d(opt.content_seq_len)
   linear_hidden_size: 256
   num_classes: 20
   pretrain_embedding: False
   static: False #是否让Embedding保持不动
   
 data:
-  train_dir: 'data/20_newsgroups'
-  test_dir: 'data/20_newsgroups_test'
+  train_dir: 'data/20_newsgroups_npz'
+  test_dir: 'data/20_newsgroups_npz'
   dataloader:
     batch_size: 64
   train_val_proportion: 0.8

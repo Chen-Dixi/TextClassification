@@ -26,8 +26,8 @@ print("Start loading data")
 train_ds = Newsgroup(args.data.train_dir,train=True)
 test_ds = Newsgroup(args.data.test_dir, train=False)
 #dataloader
-train_dl = DataLoader(train_ds,batch_size=args.data.dataloader.batch_size,shuffle=True,pin_memory=True,drop_last=True)
-test_dl = DataLoader(test_ds,batch_size=args.data.dataloader.batch_size,pin_memory=True,shuffle=False)
+train_dl = DataLoader(train_ds,batch_size=args.data.dataloader.batch_size,shuffle=True,drop_last=True)
+test_dl = DataLoader(test_ds,batch_size=args.data.dataloader.batch_size,shuffle=False)
 
 
 print("Finish loading data")
@@ -50,10 +50,11 @@ for epoch in range(args.train.epochs):
     for idx, data in tqdm.tqdm(enumerate(train_dl)):
         inputs, labels = data
         inputs = inputs.to(output_device)
-        labels = inputs.to(output_device)
+        labels = labels.to(output_device)
         optimizer.zero_grad()
         
         outputs = net(inputs)
+        
         loss = criterion(outputs,labels)
         loss.backward()
 
@@ -70,9 +71,9 @@ for epoch in range(args.train.epochs):
     for idx, data in enumerate(test_dl):
         inputs, labels = data
         inputs = inputs.to(output_device)
-        labels = inputs.to(output_device)
+        labels = labels.to(output_device)
         with torch.no_grad():
-            outputs = net(intpus)
+            outputs = net(inputs)
             _, preds = torch.max(outputs,dim=1)
             corrects += torch.sum(preds == labels).cpu().item()
 

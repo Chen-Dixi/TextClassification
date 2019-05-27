@@ -38,7 +38,7 @@ class Newsgroup(data.Dataset):
         self.labels = torch.from_numpy(labels)
         
 
-        self.data = torch.from_numpy(data)
+        self.data = torch.from_numpy(data).long()
 
 
     def _check_if_exists(self):

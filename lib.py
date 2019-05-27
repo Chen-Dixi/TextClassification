@@ -1,5 +1,6 @@
 from easydl import *
 
+
 def seed_everything(seed=1234):
     import random
     random.seed(seed)

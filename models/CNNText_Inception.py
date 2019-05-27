@@ -69,7 +69,9 @@ class CNNText_inception(nn.Module):
             x=x.detach()
         
         #permute to become channel first
+
         x=self.content_conv(x.permute(0,2,1))
+        
         out=x.view(x.size(0), -1)
         out=self.fc(out)
         return out
