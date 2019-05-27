@@ -123,17 +123,17 @@ class Newsgroup(data.Dataset):
         self.text_dir = text_dir
         
         #读文件，把文本保存起来，根据remove去掉文件内的无关信息
-        texts, labels = load_text(text_dir, class_to_idx, remove)
+        data, labels = load_text(text_dir, class_to_idx, remove)
         
 
         self.remove = remove
         #text打印出来是byte
-        self.texts = texts
+        
         self.labels = labels
         # 英文单词转为 数字向量表现形式, pad变为一样的长度，
         # 如果要变为数字表示形式，需要有一个单词到数字的hash，word2vec，glove
         # 转换过后要用pad把文本弄成一样的长度
-        data = word2index(texts,vocab_size,pad)
+        data = word2index(data,vocab_size,pad)
 
         self.data = data
 
@@ -166,4 +166,4 @@ class Newsgroup(data.Dataset):
         return sample, target
 
     def __len__(self):
-        return len(self.texts)
+        return len(self.labels)

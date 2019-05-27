@@ -1,5 +1,3 @@
-
-import torch as t
 import torch
 import numpy as np
 from torch import nn
@@ -9,7 +7,7 @@ class Inception(nn.Module):
     def __init__(self,cin,co,relu=True,norm=True):
         super(Inception, self).__init__()
         assert(co%4==0)
-        cos=[co/4]*4
+        cos=[co//4]*4
         self.activa=nn.Sequential()
         if norm:self.activa.add_module('norm',nn.BatchNorm1d(co))
         if relu:self.activa.add_module('relu',nn.ReLU(True))
@@ -55,14 +53,14 @@ class CNNText_inception(nn.Module):
             nn.MaxPool1d(opt.content_seq_len)
         )
         self.fc = nn.Sequential(
-            nn.Linear(incept_dim*2,opt.linear_hidden_size),
+            nn.Linear(incept_dim,opt.linear_hidden_size),
             nn.BatchNorm1d(opt.linear_hidden_size),
             nn.ReLU(inplace=True),
             nn.Linear(opt.linear_hidden_size,opt.num_classes)
         )
-        if opt.embedding_path:
+        if opt.pretrain_embedding:
             print('load embedding')
-            self.encoder.weight.data.copy_(t.from_numpy(np.load(opt.embedding_path)['vector']))
+            #self.encoder.weight.data.copy_(torch.from_numpy(np.load(opt.embedding_path)['vector']))
  
     def forward(self,texts):
         x = self.encoder(texts)

@@ -3,10 +3,15 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#MAC File sys
+.DS_Store
 #Data
 /data/*/
+!/data/20_newsgroups_npz/  
 # C extensions
 *.so
+#checkpoint
+checkpoints/*.pth
 
 # Logs
 logs
