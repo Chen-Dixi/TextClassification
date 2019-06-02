@@ -145,7 +145,7 @@ def word2index(texts,vocab_size=256,pad=True):
     
 
 
-    data = pad_sequences(sequences ,maxlen=5000,padding='post', truncating='post')
+    data = pad_sequences(sequences ,maxlen=5000,padding='post',dtype='int64' ,truncating='post',value=word_index['something'])
     
     # pad
 
@@ -155,17 +155,17 @@ def word2index(texts,vocab_size=256,pad=True):
 print("start load 20news")
 TRAIN_DIR='data/20_newsgroups'
 _, class_to_idx = _find_classes(TRAIN_DIR)
-train_texts, train_labels = load_text(TRAIN_DIR,class_to_idx,remove=('headers','footers','quotes'))
+train_texts, train_labels = load_text(TRAIN_DIR,class_to_idx,remove=('headers','footers'))
 train_inputs = word2index(train_texts,vocab_size=299567)
 train_labels = np.array(train_labels)
 print(train_inputs.shape)
-np.savez_compressed('data/train.npz',texts=train_inputs,labels=train_labels)
+np.savez_compressed('data/20_newsgroups_npz/train.npz',texts=train_inputs,labels=train_labels)
 #2 test.npz
 TEST_DIR='data/20_newsgroups_test'
 _, class_to_idx = _find_classes(TEST_DIR)
-test_texts, test_labels = load_text(TEST_DIR,class_to_idx,remove=('headers','footers','quotes'))
+test_texts, test_labels = load_text(TEST_DIR,class_to_idx,remove=('headers','footers'))
 test_inputs = word2index(test_texts,vocab_size=299567)
 test_labels = np.array(test_labels)
 print(test_inputs.shape)
-np.savez_compressed('data/test.npz',texts=test_inputs,labels=test_labels)
+np.savez_compressed('data/20_newsgroups_npz/test.npz',texts=test_inputs,labels=test_labels)
 print("finish")

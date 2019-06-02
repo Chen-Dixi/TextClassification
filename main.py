@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from models.CNNText_Inception import CNNText_inception
 from tensorboardX import SummaryWriter
 from torch import optim
+import torch.nn.parallel
 import tqdm
 import torch
 from dixitool.pytorch.module import functional as F
@@ -16,7 +17,7 @@ seed_everything(1995)
 writer = SummaryWriter()
 
 #gpu
-output_device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+output_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 print(output_device)
 #dataset train,val
@@ -33,7 +34,7 @@ test_dl = DataLoader(test_ds,batch_size=args.data.dataloader.batch_size,shuffle=
 print("Finish loading data")
 net = CNNText_inception(args.model)
 net.to(output_device)
-
+net = nn.DataParallel(net, list(range(2)))
 criterion = nn.CrossEntropyLoss()
 
     #optimizer

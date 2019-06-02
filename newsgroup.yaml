@@ -17,13 +17,13 @@ test:
 model:
   vocab_size: 299567
   embedding_dim: 300 #词向量维度
-  inception_dim: 200 #inception卷积核数
+  inception_dim: 512 #inception卷积核数
   content_seq_len: 5000 #描述长度 nn.MaxPool1d(opt.content_seq_len)
-  linear_hidden_size: 256
+  linear_hidden_size: 1024
   num_classes: 20
   pretrain_embedding: True
   embedding_path: 'data/embedding.npz'
-  static: False #是否让Embedding保持不动
+  static: false #是否让Embedding保持不动
   
 data:
   train_dir: 'data/20_newsgroups_npz'
